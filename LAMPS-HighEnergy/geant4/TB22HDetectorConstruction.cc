@@ -1,4 +1,6 @@
 #include "TB22HDetectorConstruction.hh"
+#include "LHMagneticField.hh"
+#include "LHMagneticFieldSetup.hh"
 
 #include "KBG4RunManager.hh"
 #include "KBGeoBoxStack.hh"
@@ -8,6 +10,7 @@
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
+#include "G4GlobalMagFieldMessenger.hh"
 #include "G4LogicalVolume.hh"
 #include "G4NistManager.hh"
 #include "G4PVPlacement.hh"
@@ -96,6 +99,49 @@ G4VPhysicalVolume* TB22HDetectorConstruction::Construct()
 	fVisWorld->SetColor(G4Color::White());
 	fVisWorld->SetForceWireframe(true);
 	WorldLog->SetVisAttributes(fVisWorld);
+
+	//Magnetic field: for charge state xCheck (Dec. 30, 2021)
+	//--------------------------------------------------------------------
+
+	/*
+    if (fPar -> GetParBool("bfieldmap"))
+    {
+        TString name = fPar -> GetParString("bfieldmapfile");
+        G4cout << "Use bfield map, name: " << name << G4endl;
+
+        LHMagneticField* bField = new LHMagneticField();
+        //bField->SetVerbosity(3);
+        //bField->SetFieldBoundX(-worlddX*2, worlddX*2);
+        //bField->SetFieldBoundY(-worlddY*2, worlddY*2);
+        //bField->SetFieldBoundZ(-worlddZ*2, worlddZ*2);
+        //bField->SetFieldOffset(1, 1, 1);
+        //bField->SetUniformField(0, 0, 1.);
+        //bField->SetUnitDistance(cm);
+        //bField->SetUnitField(kilogauss);
+        //bField->SetUnitField(1.e-3 * tesla);
+        bField->MakeFieldMap(name.Data());
+
+        LHMagneticFieldSetup* bFieldSetup = new LHMagneticFieldSetup();
+        //bFieldSetup->SetStepperType(2);
+        //bFieldSetup->SetStepMin(1 * mm);
+        //bFieldSetup->SetDeltaChord(0.1 * mm);
+        //bFieldSetup->SetDeltaIntersection(1.e-4);
+        //bFieldSetup->SetDeltaOneStep(1.e-3);
+        //bFieldSetup->SetEpsilonMax(1.e-4);
+        //bFieldSetup->SetEpsilonMin(1.e-6);
+        //bFieldSetup->SetFieldManager(G4TransportationManager::GetTransportationManager()->GetFieldManager());
+        bFieldSetup->MakeSetup(bField);
+        fFieldCache.Put(bFieldSetup);
+        WorldLog->SetFieldManager(fFieldCache.Get()->GetFieldManager(), true);
+    }
+    else
+    {
+        G4double bfieldx = fPar -> GetParDouble("bfieldx");
+        G4double bfieldy = fPar -> GetParDouble("bfieldy");
+        G4double bfieldz = fPar -> GetParDouble("bfieldz");
+        new G4GlobalMagFieldMessenger(G4ThreeVector(bfieldx*tesla, bfieldy*tesla, bfieldz*tesla));
+    }
+	*/
 
 	//SC
 	//--------------------------------------------------------------------

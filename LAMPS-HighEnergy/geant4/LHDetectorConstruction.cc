@@ -230,7 +230,7 @@ G4VPhysicalVolume *LHDetectorConstruction::Construct()
 		//+++++++++++++++++++++++++++++++++++++++
 
 		G4ThreeVector ZeroP(0, 0, 0);
-		G4VisAttributes* visMagF = new G4VisAttributes(G4Colour(G4Colour::White()));
+		G4VisAttributes* visMagF = new G4VisAttributes(G4Colour(G4Colour::Gray()));
 		visMagF->SetForceWireframe(true);
 
 		//OVC
@@ -289,7 +289,7 @@ G4VPhysicalVolume *LHDetectorConstruction::Construct()
 		G4LogicalVolume *logicTPC = new G4LogicalVolume(solidTPC, matGas, "TPCLogic");
 		logicTPC -> SetUserLimits(new G4UserLimits(1. * mm));
 
-		G4VisAttributes * visTPC = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		G4VisAttributes * visTPC = new G4VisAttributes(G4Colour(G4Colour::White()));
 		visTPC->SetForceWireframe(true);
 		logicTPC->SetVisAttributes(visTPC);
 
@@ -423,7 +423,7 @@ G4VPhysicalVolume *LHDetectorConstruction::Construct()
 		runManager -> SetSensitiveDetector(pvp);
 	}//FTOF
 
-	#if 1
+	#if 0
 	//FT, rectangle w/ hole (simiar to PHENIX MuID)
 	//---------------------------------------------
 
@@ -474,7 +474,7 @@ G4VPhysicalVolume *LHDetectorConstruction::Construct()
 	}//FT, rectangle
 	#endif
 
-	#if 0
+	#if 1
 	//FT, octants - DEBUG LATER!
 	//-------------------------------------------
 
@@ -532,81 +532,79 @@ G4VPhysicalVolume *LHDetectorConstruction::Construct()
 
 	if ( par -> GetParBool("NDIn") )
 	{
-        G4int    ndID     = (par->CheckPar("NDID"))?par->GetParInt("NDID"):50;
-        G4int    ndLayerN = par->GetParInt("NDLayerN");    //Total # of layers
-        G4double ndLayerD = par->GetParDouble("NDLayerD"); //Distance btw each layer surface
-        G4double ndLayerZ = par->GetParDouble("NDLayerZ"); //1st VETO's z offset
+		G4int    ndID     = (par->CheckPar("NDID"))?par->GetParInt("NDID"):50;
+		G4int    ndLayerN = par->GetParInt("NDLayerN");    //Total # of layers
+		G4double ndLayerD = par->GetParDouble("NDLayerD"); //Distance btw each layer surface
+		G4double ndLayerZ = par->GetParDouble("NDLayerZ"); //1st VETO's z offset
 
-        G4int    ndSlatN = par->GetParInt("NDSlatN");    //# of slats per layer
-        G4double ndSlatW = par->GetParDouble("NDSlatW"); //Slat width (x)
-        G4double ndSlatH = par->GetParDouble("NDSlatH"); //Slat height (y)
-        G4double ndSlatT = par->GetParDouble("NDSlatT"); //Slat thickness (z)
-        G4double ndVetoT = par->GetParDouble("NDVetoT"); //Slat thickness (z)
+		G4int    ndSlatN = par->GetParInt("NDSlatN");    //# of slats per layer
+		G4double ndSlatW = par->GetParDouble("NDSlatW"); //Slat width (x)
+		G4double ndSlatH = par->GetParDouble("NDSlatH"); //Slat height (y)
+		G4double ndSlatT = par->GetParDouble("NDSlatT"); //Slat thickness (z)
+		G4double ndVetoT = par->GetParDouble("NDVetoT"); //Slat thickness (z)
 
-        G4double ndTheta = par->GetParDouble("NDTheta"); //Theta angle of entire ND
+		G4double ndTheta = par->GetParDouble("NDTheta"); //Theta angle of entire ND
 
-        G4ThreeVector ZERO(0, 0, 0);
-        G4RotationMatrix* RotZ90 = new G4RotationMatrix();
-        RotZ90->rotateZ(-90 * deg);
-        G4double ndTotalW = ndSlatN * ndSlatH;
-        G4double ndTotalT = ndVetoT + (2*ndSlatT + ndLayerD) * (ndLayerN-1);
+		G4ThreeVector ZERO(0, 0, 0);
+		G4RotationMatrix* RotZ90 = new G4RotationMatrix();
+		RotZ90->rotateZ(-90 * deg);
+		G4double ndTotalW = ndSlatN * ndSlatH;
+		G4double ndTotalT = ndVetoT + (2*ndSlatT + ndLayerD) * (ndLayerN-1);
 
-        //Volume, mother
-        G4Box*           ndSolid = new G4Box("FTSolidBox", ndTotalW/2., ndTotalW/2., ndTotalT/2.);
-        G4LogicalVolume* ndLogic = new G4LogicalVolume(ndSolid, matVac, "ndLogic");
-        ndLogic->SetVisAttributes(G4VisAttributes::GetInvisible());
+		//Volume, mother
+		G4Box*           ndSolid = new G4Box("FTSolidBox", ndTotalW/2., ndTotalW/2., ndTotalT/2.);
+		G4LogicalVolume* ndLogic = new G4LogicalVolume(ndSolid, matVac, "ndLogic");
+		ndLogic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-        //Volume, units
-        G4Box* ndVetoSolid = new G4Box("NDVetoSolid", ndSlatW/2., ndSlatH/2., ndVetoT/2.);
-        G4Box* ndSlatSolid = new G4Box("NDSlatSolid", ndSlatW/2., ndSlatH/2., ndSlatT/2.);
-        G4LogicalVolume* ndVetoLogic = new G4LogicalVolume(ndVetoSolid, matSC, "NDVetoLogic");
-        G4LogicalVolume* ndSlatLogic = new G4LogicalVolume(ndSlatSolid, matSC, "NDSlatLogic");
-        G4VisAttributes* ndVis = new G4VisAttributes();
-        ndVis->SetColor(G4Color::Magenta());
-        ndVis->SetForceWireframe(true);
-        ndVetoLogic->SetVisAttributes(ndVis);
-        ndSlatLogic->SetVisAttributes(ndVis);
+		//Volume, units
+		G4Box* ndVetoSolid = new G4Box("NDVetoSolid", ndSlatW/2., ndSlatH/2., ndVetoT/2.);
+		G4Box* ndSlatSolid = new G4Box("NDSlatSolid", ndSlatW/2., ndSlatH/2., ndSlatT/2.);
+		G4LogicalVolume* ndVetoLogic = new G4LogicalVolume(ndVetoSolid, matSC, "NDVetoLogic");
+		G4LogicalVolume* ndSlatLogic = new G4LogicalVolume(ndSlatSolid, matSC, "NDSlatLogic");
+		G4VisAttributes* ndVis = new G4VisAttributes();
+		ndVis->SetColor(G4Color::Magenta());
+		ndVis->SetForceWireframe(true);
+		ndVetoLogic->SetVisAttributes(ndVis);
+		ndSlatLogic->SetVisAttributes(ndVis);
 
-        for (int a=0; a<ndLayerN; a++) //Veto is always layer 0
-        for (int b=0; b<2;        b++) //Sublayer
-        for (int c=0; c<ndSlatN;  c++)
-        {
-            if (a==0 && b>0) continue; //No pair sublayer for Veto
-            string ndSlatName = Form("ND_l%im%is%i", a, b, c);
-            const int slatId = (ndID+a)*100 + ndSlatN*b + c;
+		for (int a=0; a<ndLayerN; a++) //Veto is always layer 0
+		for (int b=0; b<2;        b++) //Sublayer
+		for (int c=0; c<ndSlatN;  c++)
+		{
+			if (a==0 && b>0) continue; //No pair sublayer for Veto
+			string ndSlatName = Form("ND_l%im%is%i", a, b, c);
+			const int slatId = (ndID+a)*100 + ndSlatN*b + c;
 
-            const bool vL = (b==0)?true:false; //Vertical (x sensitive) layer or not
-            const float slatCenter = ndSlatH * (0.5 -ndSlatN/2 + c);
-            const float ofsX = vL?slatCenter:0;
-            const float ofsY = vL?0:slatCenter;
-            const float ofsZ = (a==0)?(-ndTotalT/2):(-ndTotalT/2+ndVetoT+ndSlatT/2+ndLayerD*a+ndSlatT*(2*(a-1)+b));
-            //cout <<Form("L%i M%i S%2i : %4.0f, %4.0f, %4.0f\n", a, b, c, ofsX, ofsY, ndLayerZ+ndTotalT/2+ofsZ);
+			const bool vL = (b==0)?true:false; //Vertical (x sensitive) layer or not
+			const float slatCenter = ndSlatH * (0.5 -ndSlatN/2 + c);
+			const float ofsX = vL?slatCenter:0;
+			const float ofsY = vL?0:slatCenter;
+			const float ofsZ = (a==0)?(-ndTotalT/2):(-ndTotalT/2+ndVetoT+ndSlatT/2+ndLayerD*a+ndSlatT*(2*(a-1)+b));
+			//cout <<Form("L%i M%i S%2i : %4.0f, %4.0f, %4.0f\n", a, b, c, ofsX, ofsY, ndLayerZ+ndTotalT/2+ofsZ);
 
-            G4ThreeVector ofsSlat(ofsX, ofsY, ofsZ);
-            new G4PVPlacement(vL?RotZ90:0, ofsSlat, (a==0)?ndVetoLogic:ndSlatLogic,
-                    ndSlatName, ndLogic, false, slatId, false);
-        }
+			G4ThreeVector ofsSlat(ofsX, ofsY, ofsZ);
+			new G4PVPlacement(vL?RotZ90:0, ofsSlat, (a==0)?ndVetoLogic:ndSlatLogic,
+					ndSlatName, ndLogic, false, slatId, false);
+		}
 
-				/*
-        G4RotationMatrix* RotY = new G4RotationMatrix();
-        RotY->rotateY(-ndTheta * deg);
-        const float ndOfsX = sin(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
-        const float ndOfsZ = cos(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
-        G4ThreeVector ndOfs(ndOfsX, 0, ndOfsZ);
-        cout <<Form("x: %5.1f, z: %5.1f, zOrig: %5.1f\n",
-                ndOfsX, ndOfsZ, sqrt(pow(ndOfsX, 2) + pow(ndOfsZ, 2)) - ndTotalT/2);
+		/*
+		G4RotationMatrix* RotY = new G4RotationMatrix();
+		RotY->rotateY(-ndTheta * deg);
+		const float ndOfsX = sin(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
+		const float ndOfsZ = cos(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
+		G4ThreeVector ndOfs(ndOfsX, 0, ndOfsZ);
+		cout <<Form("x: %5.1f, z: %5.1f, zOrig: %5.1f\n",
+				ndOfsX, ndOfsZ, sqrt(pow(ndOfsX, 2) + pow(ndOfsZ, 2)) - ndTotalT/2);
+		auto ND = new G4PVPlacement(RotY, ndOfs, ndLogic, "ND", logicWorld, false, ndID, true);
+		*/
+		const float ndOfsX = sin(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
+		const float ndOfsZ = cos(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
 
-        auto ND = new G4PVPlacement(RotY, ndOfs, ndLogic, "ND", logicWorld, false, ndID, true);
-				*/
-        const float ndOfsX = sin(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
-        const float ndOfsZ = cos(ndTheta * deg) * (ndLayerZ + ndTotalT/2);
-
-				G4RotationMatrix rotm  = G4RotationMatrix();
-				rotm.rotateY(ndTheta*deg);
-				G4Transform3D transform = G4Transform3D(rotm, G4ThreeVector(ndOfsX, 0, ndOfsZ));
-				auto ND = new G4PVPlacement(transform, ndLogic, "ND", logicWorld, false, ndID, true);
-        runManager->SetSensitiveDetector(ND);
-
+		G4RotationMatrix rotm  = G4RotationMatrix();
+		rotm.rotateY(ndTheta*deg);
+		G4Transform3D transform = G4Transform3D(rotm, G4ThreeVector(ndOfsX, 0, ndOfsZ));
+		auto ND = new G4PVPlacement(transform, ndLogic, "ND", logicWorld, false, ndID, true);
+		runManager->SetSensitiveDetector(ND);
 	}//ND
 
 	return physWorld;
